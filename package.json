@@ -12,6 +12,7 @@
     "@nuxt/devtools": "latest",
     "@types/node": "^18",
     "nuxt": "^3.6.1",
+    "prettier": "2.8.4",
     "vite": "4.3.9"
   }
 }

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { useDoctorService } from '~/composables';
 
-const usernameList = ref<string[]>([]);
+const { doctorList, insertDoctor, removeDoctor } = useDoctorService();
 
-function submitHandler(e: Event, list: string[]): void {
+function submitHandler(e: Event): void {
   e.preventDefault();
 
   if (e instanceof SubmitEvent) {
@@ -12,7 +12,7 @@ function submitHandler(e: Event, list: string[]): void {
     if (target instanceof HTMLFormElement) {
       const element = target.username as HTMLInputElement;
 
-      list.push(element.value);
+      insertDoctor({ name: element.value });
       element.value = '';
     }
   }
@@ -23,7 +23,7 @@ function submitHandler(e: Event, list: string[]): void {
   <UContainer>
     <div class="flex space-x-4">
       <div class="border-2 border-gray-500 p-4 rounded-xl space-y-4">
-        <form @submit="(e) => submitHandler(e, usernameList)">
+        <form @submit="submitHandler">
           <UFormGroup label="이름">
             <UInput
               name="username"
@@ -32,18 +32,18 @@ function submitHandler(e: Event, list: string[]): void {
             />
           </UFormGroup>
         </form>
-        <div v-if="usernameList.length">
+        <div v-if="doctorList.length">
           <ul class="space-y-1">
             <li
-              v-for="(username, index) in usernameList"
+              v-for="doctor in doctorList"
               class="relative border-0 rounded-md text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 flex justify-between items-center"
             >
-              <span>{{ username }}</span>
+              <span>{{ doctor.name }}</span>
               <UButton
                 square
                 size="2xs"
                 icon="i-heroicons-x-mark"
-                @click="usernameList.splice(index, 1)"
+                @click="removeDoctor(doctor)"
               />
             </li>
           </ul>

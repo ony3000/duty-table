@@ -11,7 +11,7 @@
   "devDependencies": {
     "@nuxt/devtools": "latest",
     "@nuxthq/ui": "2.5.0",
-    "@types/node": "^18",
+    "@types/node": "^18.16.19",
     "@types/uuid": "9.0.2",
     "nuxt": "^3.6.1",
     "prettier": "2.8.4",

@@ -3,8 +3,6 @@ import { v4 as uuid } from 'uuid';
 
 import type { Doctor, DoctorRequiredFields } from '~/miscs/types';
 
-import { useBaseRepository } from './useBaseRepository';
-
 const storageKey = 'duty-table:doctor-list';
 
 function isDoctor(arg: unknown): arg is Doctor {
@@ -23,7 +21,7 @@ function isDoctorArray(arg: unknown): arg is Doctor[] {
 }
 
 export function useDoctorRepository() {
-  const { getItem, setItem } = useBaseRepository();
+  const { getItem, setItem } = useLocalStorage();
 
   function getDoctorList(): Doctor[] {
     return getItem<Doctor[]>(storageKey, isDoctorArray) ?? [];

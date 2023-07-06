@@ -1,6 +1,6 @@
 import invariant from 'tiny-invariant';
 
-export function useBaseRepository() {
+export function useLocalStorage() {
   const { localStorage: storage } = globalThis;
 
   function getItem<T = unknown>(

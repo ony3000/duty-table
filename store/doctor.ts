@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { defineStore } from 'pinia';
 import { v4 as uuid } from 'uuid';
 
 import type { Doctor, DoctorRequiredFields } from '~/miscs/types';
@@ -20,14 +20,12 @@ function isDoctorArray(arg: unknown): arg is Doctor[] {
   return Array.isArray(arg) && arg.every(isDoctor);
 }
 
-export function useDoctorRepository() {
+export const useDoctorStore = defineStore('doctor', () => {
   const { getItem, setItem } = useLocalStorage();
 
-  function getDoctorList(): Doctor[] {
-    return getItem<Doctor[]>(storageKey, isDoctorArray) ?? [];
-  }
-
-  const doctorListRef = ref(getDoctorList());
+  const doctorList = ref<Doctor[]>(
+    getItem<Doctor[]>(storageKey, isDoctorArray) ?? [],
+  );
 
   function insertDoctor(fields: DoctorRequiredFields): void {
     const newDoctor: Doctor = {
@@ -35,24 +33,24 @@ export function useDoctorRepository() {
       id: uuid(),
     };
 
-    doctorListRef.value.push(newDoctor);
-    setItem(storageKey, doctorListRef.value);
+    doctorList.value.push(newDoctor);
+    setItem(storageKey, doctorList.value);
   }
 
   function removeDoctor(target: Doctor): void {
-    const index = doctorListRef.value.findIndex(
+    const index = doctorList.value.findIndex(
       (doctor) => doctor.id === target.id,
     );
 
     if (index !== -1) {
-      doctorListRef.value.splice(index, 1);
-      setItem(storageKey, doctorListRef.value);
+      doctorList.value.splice(index, 1);
+      setItem(storageKey, doctorList.value);
     }
   }
 
   return {
-    doctorList: doctorListRef.value,
+    doctorList,
     insertDoctor,
     removeDoctor,
   };
-}
+});

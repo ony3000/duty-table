@@ -18,7 +18,7 @@ function submitHandler(e: Event): void {
 </script>
 
 <template>
-  <div class="border-2 border-gray-500 p-4 rounded-xl space-y-4">
+  <div class="border-2 border-gray-500 p-4 rounded-xl space-y-4 w-60">
     <form @submit="submitHandler">
       <UFormGroup label="이름">
         <UInput

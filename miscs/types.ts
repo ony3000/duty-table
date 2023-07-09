@@ -1,9 +1,6 @@
-type BaseFields = {
-  id: string;
-};
+import { z } from 'zod';
+import { doctorRequiredFieldsSchema, doctorSchema } from './schema';
 
-export type DoctorRequiredFields = {
-  name: string;
-};
+export type DoctorRequiredFields = z.infer<typeof doctorRequiredFieldsSchema>;
 
-export type Doctor = BaseFields & DoctorRequiredFields;
+export type Doctor = z.infer<typeof doctorSchema>;

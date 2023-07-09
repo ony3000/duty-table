@@ -1,31 +1,18 @@
 import { defineStore } from 'pinia';
 import { v4 as uuid } from 'uuid';
+import { z } from 'zod';
 
+import { doctorSchema } from '~/miscs/schema';
 import type { Doctor, DoctorRequiredFields } from '~/miscs/types';
 
+const doctorListSchema = z.array(doctorSchema);
+
 const storageKey = 'duty-table:doctor-list';
-
-function isDoctor(arg: unknown): arg is Doctor {
-  return (
-    typeof arg === 'object' &&
-    arg !== null &&
-    'id' in arg &&
-    'name' in arg &&
-    typeof arg.id === 'string' &&
-    typeof arg.name === 'string'
-  );
-}
-
-function isDoctorArray(arg: unknown): arg is Doctor[] {
-  return Array.isArray(arg) && arg.every(isDoctor);
-}
 
 export const useDoctorStore = defineStore('doctor', () => {
   const { getItem, setItem } = useLocalStorage();
 
-  const doctorList = ref<Doctor[]>(
-    getItem<Doctor[]>(storageKey, isDoctorArray) ?? [],
-  );
+  const doctorList = ref<Doctor[]>(getItem(storageKey, doctorListSchema) ?? []);
 
   function insertDoctor(fields: DoctorRequiredFields): void {
     const newDoctor: Doctor = {

@@ -1,12 +1,12 @@
-import invariant from 'tiny-invariant';
+import type { ZodTypeAny, infer as ZodInfer } from 'zod';
 
 export function useLocalStorage() {
   const { localStorage: storage } = globalThis;
 
-  function getItem<T = unknown>(
+  function getItem<T extends ZodTypeAny>(
     key: string,
-    typeGuard: (arg: unknown) => arg is T,
-  ): T | null {
+    expectedSchema: T,
+  ): ZodInfer<T> | null {
     if (!storage) {
       return null;
     }
@@ -18,11 +18,11 @@ export function useLocalStorage() {
     }
 
     try {
-      const parsedItem = JSON.parse(storedItem) as unknown;
+      const data = JSON.parse(storedItem) as unknown;
 
-      invariant(typeGuard(parsedItem));
+      expectedSchema.parse(data);
 
-      return parsedItem;
+      return data as ZodInfer<typeof expectedSchema>;
     } catch (_) {
       setItem(key, null);
 

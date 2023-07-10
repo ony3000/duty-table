@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { v4 as uuid } from 'uuid';
 
+import { MON, THU, BUFFER_DAYS } from '~/miscs/constants';
 import type { Doctor, DayOfTheWeek, Day, Slot } from '~/miscs/types';
 import { shuffle } from '~/miscs/utils';
 
@@ -89,6 +90,72 @@ function firstRound(): void {
 }
 
 /**
+ * 두 번째 라운드
+ *
+ * 모든 Doctor의 두 번째 Slot은 첫 번째 Slot과 반대로 임의 배정한다
+ *
+ * - 첫 번째 Slot이 평일(월-목)이면 두 번째 Slot은 주말(금-일)
+ * - 첫 번째 Slot이 주말(금-일)이면 두 번째 Slot은 평일(월-목)
+ */
+function secondRound(): void {
+  console.log('secondRound');
+
+  /**
+   * 첫 번째 라운드에서 Doctor가 배정된 Slot
+   */
+  const doctorAssignedSlotList = slotList.filter(
+    (slot) => slot.doctor !== undefined,
+  ) as Required<Slot>[];
+
+  /**
+   * 평일 Slot
+   */
+  const shuffledWeekdaySlotList: Slot[] = shuffle(
+    slotList.filter(
+      (slot) => slot.day.dayOfTheWeek >= MON && slot.day.dayOfTheWeek <= THU,
+    ),
+  );
+  /**
+   * 주말 Slot
+   */
+  const shuffledWeekendSlotList: Slot[] = shuffle(
+    slotList.filter(
+      (slot) => !(slot.day.dayOfTheWeek >= MON && slot.day.dayOfTheWeek <= THU),
+    ),
+  );
+
+  doctorAssignedSlotList.forEach(({ day, doctor }) => {
+    const { dayOfTheWeek } = day;
+
+    const availableWeekdaySlotList = shuffledWeekdaySlotList.filter(
+      (slot) =>
+        slot.doctor === undefined &&
+        (slot.day.index < day.index - BUFFER_DAYS ||
+          slot.day.index > day.index + BUFFER_DAYS),
+    );
+    const availableWeekendSlotList = shuffledWeekendSlotList.filter(
+      (slot) =>
+        slot.doctor === undefined &&
+        (slot.day.index < day.index - BUFFER_DAYS ||
+          slot.day.index > day.index + BUFFER_DAYS),
+    );
+
+    // 평일 배정자에게 주말 배정 (Slot이 있다면)
+    if (dayOfTheWeek >= MON && dayOfTheWeek <= THU) {
+      if (availableWeekendSlotList.length) {
+        availableWeekendSlotList[0].doctor = doctor;
+      }
+    }
+    // 주말 배정자에게 평일 배정 (Slot이 있다면)
+    else {
+      if (availableWeekdaySlotList.length) {
+        availableWeekdaySlotList[0].doctor = doctor;
+      }
+    }
+  });
+}
+
+/**
  * 시간표 모의 계산
  */
 function clickHandler(): void {
@@ -105,6 +172,12 @@ function clickHandler(): void {
   }
 
   firstRound();
+  if (slotList.every((slot) => slot.doctor !== undefined)) {
+    console.groupEnd();
+    return;
+  }
+
+  secondRound();
   if (slotList.every((slot) => slot.doctor !== undefined)) {
     console.groupEnd();
     return;

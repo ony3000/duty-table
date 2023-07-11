@@ -13,6 +13,10 @@ export type DayOfTheWeek = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 export type Day = {
   id: string;
   index: number;
+  /**
+   * 평일(월-목)과 주말(금-일)을 구분하기 위한 index 기반의 값
+   */
+  indexGroup: number;
   dayOfTheWeek: DayOfTheWeek;
   /**
    * 공휴일 여부

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { v4 as uuid } from 'uuid';
 
-import { MON, THU, BUFFER_DAYS } from '~/miscs/constants';
+import { SUN, MON, THU, FRI, SAT, BUFFER_DAYS } from '~/miscs/constants';
 import type { Doctor, DayOfTheWeek, Day, Slot } from '~/miscs/types';
 import { shuffle } from '~/miscs/utils';
 
@@ -18,6 +18,7 @@ const dayList: Day[] = [...Array(14)].map((_, index) => {
   return {
     id: uuid(),
     index,
+    indexGroup: Math.floor((index * 2) / 7), // index를 3.5(=목요일 index와 금요일 index의 중간값)로 나눈 몫
     dayOfTheWeek,
     isHoliday: false,
   };
@@ -156,31 +157,168 @@ function secondRound(): void {
 }
 
 /**
+ * 마지막 라운드
+ *
+ * Doctor가 배정되지 않은 나머지 Slot에 Doctor를 배정한다
+ */
+function finalRound(): void {
+  console.log('finalRound');
+
+  while (slotList.some((slot) => slot.doctor === undefined)) {
+    /**
+     * Doctor가 배정되지 않은 Slot
+     */
+    const doctorUnassignedSlotList: Array<
+      Slot & { weight: number; availableDoctorSet: Set<Doctor> }
+    > = slotList
+      .filter((slot) => slot.doctor === undefined)
+      .map((slot) => {
+        let weight = 1;
+        const { dayOfTheWeek } = slot.day;
+
+        if (slot.day.isHoliday || [SAT, SUN].includes(dayOfTheWeek)) {
+          weight = 2;
+        } else if ([FRI].includes(dayOfTheWeek)) {
+          weight = 1.5;
+        }
+
+        return { ...slot, weight, availableDoctorSet: new Set() };
+      });
+
+    /**
+     * 배정된 Slot 기반으로 근무시간 가중치(weight)가 반영된 Doctor
+     */
+    const weightedDoctorList: Array<
+      Doctor & {
+        weightSum: number;
+        assignedSlotCount: number;
+        availableSlotList: typeof doctorUnassignedSlotList;
+      }
+    > = doctorList.map((doctor) => {
+      /**
+       * 근무시간 가중치 합계
+       */
+      let weightSum = 0;
+      /**
+       * 이 Doctor에게 배정 가능한 Slot
+       */
+      let availableSlotList = doctorUnassignedSlotList.slice();
+
+      /**
+       * 이 Doctor가 배정된 Slot
+       */
+      const selfAssignedSlotList = slotList.filter(
+        (slot) => slot.doctor === doctor,
+      );
+
+      selfAssignedSlotList.forEach(({ day }) => {
+        const { index, indexGroup, dayOfTheWeek } = day;
+
+        if (day.isHoliday || [SAT, SUN].includes(dayOfTheWeek)) {
+          weightSum += 2;
+        } else if ([FRI].includes(dayOfTheWeek)) {
+          weightSum += 1.5;
+        } else {
+          weightSum += 1;
+        }
+
+        availableSlotList = availableSlotList.filter(
+          (slot) =>
+            slot.day.indexGroup !== indexGroup &&
+            (slot.day.index < index - BUFFER_DAYS ||
+              slot.day.index > index + BUFFER_DAYS),
+        );
+      });
+
+      availableSlotList.forEach((slot) => {
+        slot.availableDoctorSet.add(doctor);
+      });
+
+      return {
+        ...doctor,
+        weightSum,
+        assignedSlotCount: selfAssignedSlotList.length,
+        availableSlotList,
+      };
+    });
+
+    weightedDoctorList.sort((former, latter) => {
+      if (former.availableSlotList.length === 0) {
+        return 1;
+      } else if (latter.availableSlotList.length === 0) {
+        return -1;
+      }
+
+      return (
+        former.assignedSlotCount - latter.assignedSlotCount ||
+        former.weightSum - latter.weightSum ||
+        former.availableSlotList.length - latter.availableSlotList.length
+      );
+    });
+
+    const orderedAvailableSlotList = weightedDoctorList[0].availableSlotList
+      .slice()
+      .sort(
+        (former, latter) =>
+          latter.weight - former.weight ||
+          former.availableDoctorSet.size - latter.availableDoctorSet.size,
+      );
+    const availableSlotOrNot:
+      | (typeof doctorUnassignedSlotList)[number]
+      | undefined = orderedAvailableSlotList[0];
+
+    if (!availableSlotOrNot) {
+      throw new Error('There are no slots available for this doctor.');
+    }
+
+    const targetSlot = slotList.find(
+      (slot) => slot.id === availableSlotOrNot.id,
+    );
+    const targetDoctor = doctorList.find(
+      (doctor) => doctor.id === weightedDoctorList[0].id,
+    );
+
+    if (targetSlot && targetDoctor) {
+      targetSlot.doctor = targetDoctor;
+    }
+  }
+}
+
+/**
  * 시간표 모의 계산
  */
 function clickHandler(): void {
   console.group('%cmock calculation', 'color: cornflowerblue;');
 
-  console.log(doctorList);
-  console.log(dayList);
-  console.log(slotList);
-
   initialize();
-  if (slotList.every((slot) => slot.doctor !== undefined)) {
-    console.groupEnd();
-    return;
-  }
 
-  firstRound();
-  if (slotList.every((slot) => slot.doctor !== undefined)) {
-    console.groupEnd();
-    return;
-  }
+  let retryCount = 0;
 
-  secondRound();
-  if (slotList.every((slot) => slot.doctor !== undefined)) {
-    console.groupEnd();
-    return;
+  while (slotList.some((slot) => slot.doctor === undefined)) {
+    try {
+      console.log(doctorList);
+      console.log(dayList);
+      console.log(slotList);
+
+      firstRound();
+      if (slotList.every((slot) => slot.doctor !== undefined)) {
+        break;
+      }
+
+      secondRound();
+      if (slotList.every((slot) => slot.doctor !== undefined)) {
+        break;
+      }
+
+      finalRound();
+      break;
+    } catch (err) {
+      console.error(err);
+
+      retryCount += 1;
+      console.log(`%cRetry calculation (${retryCount})`, 'color: orange;');
+      initialize();
+    }
   }
 
   console.groupEnd();

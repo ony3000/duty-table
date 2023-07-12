@@ -9,3 +9,12 @@ export const doctorRequiredFieldsSchema = z.object({
 });
 
 export const doctorSchema = baseFieldsSchema.merge(doctorRequiredFieldsSchema);
+
+const dayRequiredFieldsSchema = z.object({
+  /**
+   * 공휴일 여부
+   */
+  isHoliday: z.boolean(),
+});
+
+export const daySchema = baseFieldsSchema.merge(dayRequiredFieldsSchema);

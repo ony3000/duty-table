@@ -2,7 +2,7 @@
 import { v4 as uuid } from 'uuid';
 
 import { SUN, MON, THU, FRI, SAT, BUFFER_DAYS } from '~/miscs/constants';
-import type { Doctor, DayOfTheWeek, Day, Slot } from '~/miscs/types';
+import type { Doctor, DayOfTheWeek, ExtendedDay, Slot } from '~/miscs/types';
 import { shuffle } from '~/miscs/utils';
 
 import DoctorLineup from './DoctorLineup.vue';
@@ -12,7 +12,7 @@ const doctorList: Doctor[] = 'ABCDEFGH'
   .split('')
   .map((suffix) => ({ id: uuid(), name: `홍길동${suffix}` }));
 
-const dayList: Day[] = [...Array(14)].map((_, index) => {
+const dayList: ExtendedDay[] = [...Array(14)].map((_, index) => {
   const dayOfTheWeek = ((1 + index) % 7) as DayOfTheWeek;
 
   return {

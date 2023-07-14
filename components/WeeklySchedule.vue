@@ -2,7 +2,7 @@
 import { SUN, MON, TUE, WED, THU, FRI, SAT } from '~/miscs/constants';
 import type { DayOfTheWeek } from '~/miscs/types';
 
-const { extendedDayList } = useDayService();
+const { extendedDayList, updateHoliday } = useDayService();
 
 const dayOfTheWeekList = '일월화수목금토'.split('');
 </script>
@@ -37,7 +37,12 @@ const dayOfTheWeekList = '일월화수목금토'.split('');
           <div class="py-1 space-y-2">
             <div class="flex justify-center items-center space-x-4">
               <span>공휴일</span>
-              <UToggle />
+              <UToggle
+                :model-value="extendedDay.isHoliday"
+                @click="updateHoliday(extendedDay)"
+                on-icon="i-heroicons-check"
+                off-icon="i-heroicons-x-mark"
+              />
             </div>
             <div class="flex justify-center items-center space-x-2">
               <UButton

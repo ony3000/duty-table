@@ -40,8 +40,19 @@ export const useDayStore = defineStore('day', () => {
     }),
   );
 
+  function updateHoliday<T extends Day>(oneDay: T): void {
+    const dayOrNot = dayList.value.find((day) => day.id === oneDay.id);
+
+    if (dayOrNot) {
+      dayOrNot.isHoliday = !dayOrNot.isHoliday;
+    }
+
+    setItem(storageKey, dayList.value);
+  }
+
   return {
     dayList,
     extendedDayList,
+    updateHoliday,
   };
 });

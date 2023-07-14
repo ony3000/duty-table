@@ -6,6 +6,7 @@ export function useDayService() {
   const store = useDayStore();
 
   const { dayList, extendedDayList } = storeToRefs(store);
+  const { updateHoliday } = store;
 
-  return { dayList, extendedDayList };
+  return { dayList, extendedDayList, updateHoliday };
 }

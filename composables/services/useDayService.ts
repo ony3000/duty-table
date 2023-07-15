@@ -1,5 +1,6 @@
 import { storeToRefs } from 'pinia';
 
+import type { ExtendedSlot } from '~/miscs/types';
 import { useDayStore } from '~/store/day';
 import { useSlotStore } from '~/store/slot';
 
@@ -12,5 +13,35 @@ export function useDayService() {
   const { slotList } = storeToRefs(slotStore);
   const { insertSlot, removeSlot } = slotStore;
 
-  return { extendedDayList, updateHoliday, insertSlot, removeSlot };
+  const extendedSlotListPerDay = computed(() =>
+    slotList.value.reduce<NodeJS.Dict<ExtendedSlot[]>>(
+      (prevResult, currentValue) => {
+        if (prevResult[currentValue.dayId] === undefined) {
+          prevResult[currentValue.dayId] = [];
+        }
+
+        const targetDay = extendedDayList.value.find(
+          (day) => day.id === currentValue.dayId,
+        );
+
+        if (targetDay) {
+          prevResult[currentValue.dayId]!.push({
+            id: currentValue.id,
+            day: targetDay,
+          });
+        }
+
+        return prevResult;
+      },
+      {},
+    ),
+  );
+
+  return {
+    extendedDayList,
+    updateHoliday,
+    insertSlot,
+    removeSlot,
+    extendedSlotListPerDay,
+  };
 }

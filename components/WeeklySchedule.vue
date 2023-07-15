@@ -4,8 +4,13 @@ import classNames from 'classnames';
 import { SUN, MON, TUE, WED, THU, FRI, SAT } from '~/miscs/constants';
 import type { DayOfTheWeek } from '~/miscs/types';
 
-const { extendedDayList, updateHoliday, insertSlot, removeSlot } =
-  useDayService();
+const {
+  extendedDayList,
+  updateHoliday,
+  insertSlot,
+  removeSlot,
+  extendedSlotListPerDay,
+} = useDayService();
 
 const dayOfTheWeekList = '일월화수목금토'.split('');
 </script>
@@ -68,13 +73,14 @@ const dayOfTheWeekList = '일월화수목금토'.split('');
           <hr />
           <ul class="p-2 space-y-1">
             <li
-              v-for="item in extendedDay.dayOfTheWeek === MON ? 1 : 2"
+              v-for="extendedSlot in extendedSlotListPerDay[extendedDay.id] ??
+              []"
               class="rounded-md text-sm px-2 py-1 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 flex items-center space-x-2"
             >
               <span class="text-[16px] inline-flex items-center">
                 <UIcon name="i-heroicons-user" />
               </span>
-              <span>홍길동</span>
+              <span>{{ extendedSlot.doctor?.name ?? '&nbsp;' }}</span>
             </li>
           </ul>
         </div>

@@ -4,7 +4,8 @@ import classNames from 'classnames';
 import { SUN, MON, TUE, WED, THU, FRI, SAT } from '~/miscs/constants';
 import type { DayOfTheWeek } from '~/miscs/types';
 
-const { extendedDayList, updateHoliday } = useDayService();
+const { extendedDayList, updateHoliday, insertSlot, removeSlot } =
+  useDayService();
 
 const dayOfTheWeekList = '일월화수목금토'.split('');
 </script>
@@ -53,14 +54,14 @@ const dayOfTheWeekList = '일월화수목금토'.split('');
                 square
                 size="2xs"
                 icon="i-heroicons-minus"
-                @click="console.log('remove slot')"
+                @click="removeSlot(extendedDay)"
               />
               <span>인원</span>
               <UButton
                 square
                 size="2xs"
                 icon="i-heroicons-plus"
-                @click="console.log('add slot')"
+                @click="insertSlot(extendedDay)"
               />
             </div>
           </div>

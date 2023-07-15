@@ -24,8 +24,10 @@ export const useSlotStore = defineStore('slot', () => {
     setItem(storageKey, slotList.value);
   }
 
-  function removeSlot<T extends Slot>(target: T): void {
-    const index = slotList.value.findIndex((slot) => slot.id === target.id);
+  function removeSlot<T extends Day>(oneDay: T): void {
+    const index = slotList.value.findLastIndex(
+      (slot) => slot.dayId === oneDay.id,
+    );
 
     if (index !== -1) {
       slotList.value.splice(index, 1);

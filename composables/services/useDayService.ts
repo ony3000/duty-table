@@ -1,12 +1,16 @@
 import { storeToRefs } from 'pinia';
 
 import { useDayStore } from '~/store/day';
+import { useSlotStore } from '~/store/slot';
 
 export function useDayService() {
-  const store = useDayStore();
+  const dayStore = useDayStore();
+  const slotStore = useSlotStore();
 
-  const { dayList, extendedDayList } = storeToRefs(store);
-  const { updateHoliday } = store;
+  const { dayList, extendedDayList } = storeToRefs(dayStore);
+  const { updateHoliday } = dayStore;
+  const { slotList } = storeToRefs(slotStore);
+  const { insertSlot, removeSlot } = slotStore;
 
-  return { dayList, extendedDayList, updateHoliday };
+  return { dayList, extendedDayList, updateHoliday, insertSlot, removeSlot };
 }

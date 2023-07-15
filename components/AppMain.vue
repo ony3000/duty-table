@@ -332,7 +332,7 @@ function clickHandler(): void {
 
 <template>
   <div class="mx-auto px-4 sm:px-6 lg:px-8 w-[1280px]">
-    <div class="space-y-4 py-4">
+    <div class="space-y-8 py-8">
       <div class="text-right">
         <UButton
           icon="i-heroicons-calendar-days"

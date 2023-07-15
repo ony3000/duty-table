@@ -1,11 +1,18 @@
 import { z } from 'zod';
-import { doctorRequiredFieldsSchema, doctorSchema, daySchema } from './schema';
+import {
+  doctorRequiredFieldsSchema,
+  doctorSchema,
+  daySchema,
+  slotSchema,
+} from './schema';
 
 export type DoctorRequiredFields = z.infer<typeof doctorRequiredFieldsSchema>;
 
 export type Doctor = z.infer<typeof doctorSchema>;
 
 export type Day = z.infer<typeof daySchema>;
+
+export type Slot = z.infer<typeof slotSchema>;
 
 /**
  * 숫자로 나타낸 요일 (0=일요일, 1=월요일, ..., 6=토요일)
@@ -21,8 +28,7 @@ export type ExtendedDay = Day & {
   dayOfTheWeek: DayOfTheWeek;
 };
 
-export type Slot = {
-  id: string;
+export type ExtendedSlot = Omit<Slot, 'dayId'> & {
   day: ExtendedDay;
   doctor?: Doctor;
 };

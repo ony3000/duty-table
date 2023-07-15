@@ -2,7 +2,12 @@
 import { v4 as uuid } from 'uuid';
 
 import { SUN, MON, THU, FRI, SAT, BUFFER_DAYS } from '~/miscs/constants';
-import type { Doctor, DayOfTheWeek, ExtendedDay, Slot } from '~/miscs/types';
+import type {
+  Doctor,
+  DayOfTheWeek,
+  ExtendedDay,
+  ExtendedSlot,
+} from '~/miscs/types';
 import { shuffle } from '~/miscs/utils';
 
 import DoctorLineup from './DoctorLineup.vue';
@@ -24,7 +29,7 @@ const dayList: ExtendedDay[] = [...Array(14)].map((_, index) => {
   };
 });
 
-const slotList: Slot[] = [];
+const slotList: ExtendedSlot[] = [];
 
 (() => {
   // 첫 번째 주
@@ -78,7 +83,7 @@ function firstRound(): void {
   console.log('firstRound');
 
   const shuffledDoctorList: Doctor[] = shuffle(doctorList.slice());
-  const shuffledSlotList: Slot[] = shuffle(slotList.slice());
+  const shuffledSlotList: ExtendedSlot[] = shuffle(slotList.slice());
 
   const minLength = Math.min(
     shuffledDoctorList.length,
@@ -106,12 +111,12 @@ function secondRound(): void {
    */
   const doctorAssignedSlotList = slotList.filter(
     (slot) => slot.doctor !== undefined,
-  ) as Required<Slot>[];
+  ) as Required<ExtendedSlot>[];
 
   /**
    * 평일 Slot
    */
-  const shuffledWeekdaySlotList: Slot[] = shuffle(
+  const shuffledWeekdaySlotList: ExtendedSlot[] = shuffle(
     slotList.filter(
       (slot) => slot.day.dayOfTheWeek >= MON && slot.day.dayOfTheWeek <= THU,
     ),
@@ -119,7 +124,7 @@ function secondRound(): void {
   /**
    * 주말 Slot
    */
-  const shuffledWeekendSlotList: Slot[] = shuffle(
+  const shuffledWeekendSlotList: ExtendedSlot[] = shuffle(
     slotList.filter(
       (slot) => !(slot.day.dayOfTheWeek >= MON && slot.day.dayOfTheWeek <= THU),
     ),
@@ -169,7 +174,7 @@ function finalRound(): void {
      * Doctor가 배정되지 않은 Slot
      */
     const doctorUnassignedSlotList: Array<
-      Slot & { weight: number; availableDoctorSet: Set<Doctor> }
+      ExtendedSlot & { weight: number; availableDoctorSet: Set<Doctor> }
     > = slotList
       .filter((slot) => slot.doctor === undefined)
       .map((slot) => {

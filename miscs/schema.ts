@@ -18,3 +18,9 @@ const dayRequiredFieldsSchema = z.object({
 });
 
 export const daySchema = baseFieldsSchema.merge(dayRequiredFieldsSchema);
+
+const slotRequiredFieldsSchema = z.object({
+  dayId: z.string(),
+});
+
+export const slotSchema = baseFieldsSchema.merge(slotRequiredFieldsSchema);

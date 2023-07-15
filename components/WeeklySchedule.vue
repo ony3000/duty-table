@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import classNames from 'classnames';
+
 import { SUN, MON, TUE, WED, THU, FRI, SAT } from '~/miscs/constants';
 import type { DayOfTheWeek } from '~/miscs/types';
 
@@ -14,22 +16,24 @@ const dayOfTheWeekList = '일월화수목금토'.split('');
         <!-- daily card -->
         <div class="w-32 border border-gray-500 rounded-xl overflow-hidden">
           <div
-            :class="`px-4 py-1 text-center ${[
-              extendedDay.isHoliday ||
-              ([SAT, SUN] as DayOfTheWeek[]).includes(extendedDay.dayOfTheWeek)
-                ? 'bg-red-300'
-                : '',
-              !extendedDay.isHoliday &&
-              ([FRI] as DayOfTheWeek[]).includes(extendedDay.dayOfTheWeek)
-                ? 'bg-orange-300'
-                : '',
-              !extendedDay.isHoliday &&
-              ([MON, TUE, WED, THU] as DayOfTheWeek[]).includes(
-                extendedDay.dayOfTheWeek,
-              )
-                ? 'bg-gray-300'
-                : '',
-            ].join(' ')}`"
+            :class="classNames(
+              'px-4 py-1 text-center',
+              {
+                'bg-red-300':
+                  extendedDay.isHoliday ||
+                  ([SAT, SUN] as DayOfTheWeek[]).includes(extendedDay.dayOfTheWeek),
+              },
+              {
+                'bg-orange-300':
+                  !extendedDay.isHoliday &&
+                  ([FRI] as DayOfTheWeek[]).includes(extendedDay.dayOfTheWeek),
+              },
+              {
+                'bg-gray-300':
+                  !extendedDay.isHoliday &&
+                  ([MON, TUE, WED, THU] as DayOfTheWeek[]).includes(extendedDay.dayOfTheWeek),
+              },
+            )"
           >
             {{ dayOfTheWeekList[extendedDay.dayOfTheWeek] }}
           </div>

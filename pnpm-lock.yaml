@@ -6,6 +6,7 @@ specifiers:
   '@pinia/nuxt': 0.4.11
   '@types/node': ^18.16.19
   '@types/uuid': 9.0.2
+  classnames: 2.3.2
   nuxt: ^3.6.2
   pinia: 2.1.4
   prettier: 2.8.4
@@ -21,6 +22,7 @@ devDependencies:
   '@pinia/nuxt': 0.4.11_vue@3.3.4
   '@types/node': 18.16.19
   '@types/uuid': 9.0.2
+  classnames: 2.3.2
   nuxt: 3.6.2_@types+node@18.16.19
   pinia: 2.1.4_vue@3.3.4
   prettier: 2.8.4
@@ -2719,6 +2721,10 @@ packages:
     resolution: {integrity: sha512-Me9nf0/BEmMOnuQzMOVXgpzkMUNbd0Am8lTl/13p0aRGAoLGk5T5sdet/42CrIGmWdG67BgHUhcKK1my1ujUEg==}
     dependencies:
       consola: 3.2.3
+    dev: true
+
+  /classnames/2.3.2:
+    resolution: {integrity: sha512-CSbhY4cFEJRe6/GQzIk5qXZ4Jeg5pcsP7b5peFSDpffpe1cqjASH/n9UTjBwOp6XpMSTwQ8Za2K5V02ueA7Tmw==}
     dev: true
 
   /clean-stack/2.2.0:

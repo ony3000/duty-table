@@ -51,7 +51,6 @@ export const useDayStore = defineStore('day', () => {
   }
 
   return {
-    dayList,
     extendedDayList,
     updateHoliday,
   };

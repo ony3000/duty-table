@@ -7,10 +7,10 @@ export function useDayService() {
   const dayStore = useDayStore();
   const slotStore = useSlotStore();
 
-  const { dayList, extendedDayList } = storeToRefs(dayStore);
+  const { extendedDayList } = storeToRefs(dayStore);
   const { updateHoliday } = dayStore;
   const { slotList } = storeToRefs(slotStore);
   const { insertSlot, removeSlot } = slotStore;
 
-  return { dayList, extendedDayList, updateHoliday, insertSlot, removeSlot };
+  return { extendedDayList, updateHoliday, insertSlot, removeSlot };
 }

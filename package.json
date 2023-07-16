@@ -1,5 +1,8 @@
 {
-  "name": "nuxt-app",
+  "name": "duty-table",
+  "version": "1.0.0-beta.0",
+  "description": "당직 시간표",
+  "author": "Hyeonjong <nianelo4@gmail.com>",
   "private": true,
   "scripts": {
     "build": "nuxt build",

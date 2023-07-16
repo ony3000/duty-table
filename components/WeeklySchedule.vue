@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { SUN, MON, TUE, WED, THU, FRI, SAT } from '~/miscs/constants';
 import type { DayOfTheWeek } from '~/miscs/types';
 
+const { isLoading } = useAppService();
 const {
   extendedDayList,
   updateHoliday,
@@ -49,6 +50,7 @@ const dayOfTheWeekList = '일월화수목금토'.split('');
               <span>공휴일</span>
               <UToggle
                 :model-value="extendedDay.isHoliday"
+                :disabled="isLoading"
                 @click="updateHoliday(extendedDay)"
                 on-icon="i-heroicons-check"
                 off-icon="i-heroicons-x-mark"
@@ -59,6 +61,7 @@ const dayOfTheWeekList = '일월화수목금토'.split('');
                 square
                 size="2xs"
                 icon="i-heroicons-minus"
+                :disabled="isLoading"
                 @click="removeSlot(extendedDay)"
               />
               <span>인원</span>
@@ -66,6 +69,7 @@ const dayOfTheWeekList = '일월화수목금토'.split('');
                 square
                 size="2xs"
                 icon="i-heroicons-plus"
+                :disabled="isLoading"
                 @click="insertSlot(extendedDay)"
               />
             </div>

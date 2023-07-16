@@ -2,7 +2,18 @@
 import DoctorLineup from './DoctorLineup.vue';
 import WeeklySchedule from './WeeklySchedule.vue';
 
+const { isLoading, setIsLoading } = useAppService();
 const { calculateTimetable } = useTimetableService();
+
+async function clickHandler(): Promise<void> {
+  setIsLoading(true);
+  await nextTick();
+
+  await calculateTimetable();
+  await nextTick();
+
+  setIsLoading(false);
+}
 </script>
 
 <template>
@@ -12,7 +23,8 @@ const { calculateTimetable } = useTimetableService();
         <UButton
           icon="i-heroicons-calendar-days"
           label="시간표 계산"
-          @click="calculateTimetable"
+          :loading="isLoading"
+          @click="clickHandler"
         />
       </div>
       <div class="flex space-x-4">

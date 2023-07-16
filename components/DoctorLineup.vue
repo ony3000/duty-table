@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const { isLoading } = useAppService();
 const { doctorList, insertDoctor, removeDoctor } = useDoctorService();
 
 function submitHandler(e: Event): void {
@@ -25,6 +26,7 @@ function submitHandler(e: Event): void {
           name="username"
           placeholder="홍길동"
           icon="i-heroicons-user"
+          :disabled="isLoading"
         />
       </UFormGroup>
     </form>
@@ -39,6 +41,7 @@ function submitHandler(e: Event): void {
             square
             size="2xs"
             icon="i-heroicons-x-mark"
+            :disabled="isLoading"
             @click="removeDoctor(doctor)"
           />
         </li>

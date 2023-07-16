@@ -251,7 +251,7 @@ export function useTimetableService() {
     }
   }
 
-  function calculateTimetable() {
+  async function calculateTimetable(): Promise<void> {
     const nonreactiveDoctorList: Doctor[] = doctorList.value.map((doctor) => ({
       ...doctor,
     }));
@@ -267,6 +267,13 @@ export function useTimetableService() {
       );
 
     initialize(nonreactiveExtendedSlotList);
+    nonreactiveExtendedSlotList.forEach((extendedSlot) => {
+      assignDoctor(
+        { id: extendedSlot.id, dayId: extendedSlot.day.id },
+        undefined,
+      );
+    });
+    await nextTick();
 
     let retryCount = 0;
 
@@ -296,6 +303,12 @@ export function useTimetableService() {
       }
     }
 
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(undefined);
+      }, 500);
+    });
+
     nonreactiveExtendedSlotList.forEach((extendedSlot) => {
       assignDoctor(
         { id: extendedSlot.id, dayId: extendedSlot.day.id },
@@ -308,6 +321,8 @@ export function useTimetableService() {
     } else {
       console.log('모든 slot에 doctor 배정됨');
     }
+
+    return Promise.resolve();
   }
 
   return { calculateTimetable };

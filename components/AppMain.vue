@@ -5,11 +5,17 @@ import WeeklySchedule from './WeeklySchedule.vue';
 const { isLoading, setIsLoading } = useAppService();
 const { calculateTimetable } = useTimetableService();
 
+const isModalOpen = ref(false);
+
 async function clickHandler(): Promise<void> {
   setIsLoading(true);
   await nextTick();
 
-  await calculateTimetable();
+  try {
+    await calculateTimetable();
+  } catch (_) {
+    isModalOpen.value = true;
+  }
   await nextTick();
 
   setIsLoading(false);
@@ -32,5 +38,28 @@ async function clickHandler(): Promise<void> {
         <WeeklySchedule />
       </div>
     </div>
+    <UModal
+      v-model="isModalOpen"
+      :ui="{
+        container: 'flex min-h-full items-center justify-center text-center',
+        padding: 'p-4',
+        base: 'relative text-left rtl:text-right overflow-hidden my-8 w-full flex flex-col',
+        transition: {
+          enter: 'ease-out duration-300',
+          enterFrom: 'opacity-0 scale-95',
+          enterTo: 'opacity-100 scale-100',
+          leave: 'ease-in duration-200',
+          leaveFrom: 'opacity-100 scale-100',
+          leaveTo: 'opacity-0 scale-95',
+        },
+      }"
+    >
+      <div class="p-4 space-x-1 flex items-center">
+        <span class="text-[24px] inline-flex">
+          <UIcon name="i-heroicons-exclamation-triangle" />
+        </span>
+        <span>담당자를 배정하지 못한 자리가 존재합니다!</span>
+      </div>
+    </UModal>
   </div>
 </template>

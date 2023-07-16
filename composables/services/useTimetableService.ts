@@ -298,7 +298,7 @@ export function useTimetableService() {
         if (retryCount > 10) {
           break;
         }
-        console.log(`%cRetry calculation (${retryCount})`, 'color: orange;');
+        console.log(`%cCalculation retry (${retryCount})`, 'color: orange;');
         initialize(nonreactiveExtendedSlotList);
       }
     }
@@ -317,9 +317,7 @@ export function useTimetableService() {
     });
 
     if (hasUnassignedSlot(nonreactiveExtendedSlotList)) {
-      console.log('doctor가 배정되지 못한 slot이 존재함');
-    } else {
-      console.log('모든 slot에 doctor 배정됨');
+      return Promise.reject();
     }
 
     return Promise.resolve();

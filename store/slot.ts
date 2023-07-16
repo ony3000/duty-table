@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { z } from 'zod';
 
 import { slotSchema } from '~/miscs/schema';
-import type { Day, Slot } from '~/miscs/types';
+import type { Doctor, Day, Slot } from '~/miscs/types';
 
 const slotListSchema = z.array(slotSchema);
 
@@ -13,6 +13,7 @@ export const useSlotStore = defineStore('slot', () => {
   const { getItem, setItem } = useLocalStorage();
 
   const slotList = ref<Slot[]>(getItem(storageKey, slotListSchema) ?? []);
+  const doctorPerSlot = ref<NodeJS.Dict<Doctor>>({});
 
   function insertSlot<T extends Day>(oneDay: T): void {
     const newSlot: Slot = {
@@ -35,9 +36,15 @@ export const useSlotStore = defineStore('slot', () => {
     }
   }
 
+  function assignDoctor(slot: Slot, doctor?: Doctor): void {
+    doctorPerSlot.value[slot.id] = doctor;
+  }
+
   return {
     slotList,
+    doctorPerSlot,
     insertSlot,
     removeSlot,
+    assignDoctor,
   };
 });

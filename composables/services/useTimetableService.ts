@@ -14,7 +14,8 @@ type WeightAppliedDoctor = Doctor & {
 
 export function useTimetableService() {
   const { doctorList } = useDoctorService();
-  const { extendedDayList, extendedSlotListPerDay } = useDayService();
+  const { extendedDayList, assignDoctor, extendedSlotListPerDay } =
+    useDayService();
 
   function hasUnassignedSlot(givenExtendedSlotList: ExtendedSlot[]): boolean {
     return givenExtendedSlotList.some((slot) => slot.doctor === undefined);
@@ -294,6 +295,13 @@ export function useTimetableService() {
         initialize(nonreactiveExtendedSlotList);
       }
     }
+
+    nonreactiveExtendedSlotList.forEach((extendedSlot) => {
+      assignDoctor(
+        { id: extendedSlot.id, dayId: extendedSlot.day.id },
+        extendedSlot.doctor,
+      );
+    });
 
     if (hasUnassignedSlot(nonreactiveExtendedSlotList)) {
       console.log('doctor가 배정되지 못한 slot이 존재함');

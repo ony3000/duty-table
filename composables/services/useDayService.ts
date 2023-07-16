@@ -10,8 +10,8 @@ export function useDayService() {
 
   const { extendedDayList } = storeToRefs(dayStore);
   const { updateHoliday } = dayStore;
-  const { slotList } = storeToRefs(slotStore);
-  const { insertSlot, removeSlot } = slotStore;
+  const { slotList, doctorPerSlot } = storeToRefs(slotStore);
+  const { insertSlot, removeSlot, assignDoctor } = slotStore;
 
   const extendedSlotListPerDay = computed(() =>
     slotList.value.reduce<NodeJS.Dict<ExtendedSlot[]>>(
@@ -28,6 +28,7 @@ export function useDayService() {
           prevResult[currentValue.dayId]!.push({
             id: currentValue.id,
             day: targetDay,
+            doctor: doctorPerSlot.value[currentValue.id],
           });
         }
 
@@ -42,6 +43,7 @@ export function useDayService() {
     updateHoliday,
     insertSlot,
     removeSlot,
+    assignDoctor,
     extendedSlotListPerDay,
   };
 }

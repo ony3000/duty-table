@@ -26,17 +26,17 @@ const dayOfTheWeekList = '일월화수목금토'.split('');
             :class="classNames(
               'px-4 py-1 text-center',
               {
-                'bg-red-300':
+                'bg-red-300 dark:bg-[#9e6a6a]':
                   extendedDay.isHoliday ||
                   ([SAT, SUN] as DayOfTheWeek[]).includes(extendedDay.dayOfTheWeek),
               },
               {
-                'bg-orange-300':
+                'bg-orange-300 dark:bg-[#9f774d]':
                   !extendedDay.isHoliday &&
                   ([FRI] as DayOfTheWeek[]).includes(extendedDay.dayOfTheWeek),
               },
               {
-                'bg-gray-300':
+                'bg-gray-300 dark:bg-[#84878a]':
                   !extendedDay.isHoliday &&
                   ([MON, TUE, WED, THU] as DayOfTheWeek[]).includes(extendedDay.dayOfTheWeek),
               },
